@@ -153,12 +153,16 @@ def _sync_single_form(base_url, headers, config, triggered_by):
 				doc = frappe.get_doc(target_doctype, existing)
 				# Submitted/cancelled docs cannot safely replace child rows or totals
 				if cint(doc.docstatus) != 0:
+					# ...but the *linked masters* and the cached fetch_from values can
+					# still be refreshed, otherwise the dashboard charts go stale.
+					_sync_linked_farmer_geography(doc, sub)
+					_refresh_linked_farmer_cache(doc)
 					skipped += 1
 					continue
 				_set_doc_values(doc, values)
 				_apply_child_table_mappings(doc, sub, child_maps, replace_existing=True)
 				_post_process_farm_doc(doc, sub, target_doctype)
-				_post_process_farm_purchase_intake_doc(doc, target_doctype)
+				_post_process_farm_purchase_intake_doc(doc, target_doctype, sub)
 				doc.flags.ignore_permissions = True
 				doc.save()
 				updated += 1
@@ -168,7 +172,7 @@ def _sync_single_form(base_url, headers, config, triggered_by):
 				_fill_required_fields(doc, target_doctype, match_field, match_val, values, sub)
 				_apply_child_table_mappings(doc, sub, child_maps, replace_existing=True)
 				_post_process_farm_doc(doc, sub, target_doctype)
-				_post_process_farm_purchase_intake_doc(doc, target_doctype)
+				_post_process_farm_purchase_intake_doc(doc, target_doctype, sub)
 				doc.flags.ignore_permissions = True
 				doc.insert()
 				created += 1
@@ -360,8 +364,13 @@ def _set_child_row_values(child_row, values, child_meta):
 		child_row.set(fieldname, value)
 
 
-def _post_process_farm_purchase_intake_doc(doc, target_doctype):
-	"""Fill item, amounts, and totals on Farm Purchase Intake after Kobo sync."""
+def _post_process_farm_purchase_intake_doc(doc, target_doctype, sub=None):
+	"""Fill item, amounts, and totals on Farm Purchase Intake after Kobo sync.
+
+	Also keeps the geography of the *linked* Farmer in sync with the submission
+	(see `_sync_linked_farmer_geography`) — the purchase itself never stores its
+	own copy of the answers.
+	"""
 	if target_doctype != "Farm Purchase Intake":
 		return
 
@@ -396,6 +405,199 @@ def _post_process_farm_purchase_intake_doc(doc, target_doctype):
 		doc.total_amount = flt(total_amount, 2)
 	if not doc.get("item") and item_from_crop:
 		doc.item = item_from_crop
+
+	_sync_linked_farmer_geography(doc, sub)
+
+
+# ─── Linked Farmer Geography ──────────────────────────────────────────────────
+
+# Kobo question that supplies each level of the geography hierarchy.
+# Kobo does not ask for ward/village, so the farmer group question fills both —
+# the same convention the existing masters follow, e.g.
+#   Ward(ward='Seira-buikwe') -> Village('Seira-buikwe-dweed') -> Farmer Group('Judica-hai-dweed')
+KOBO_GEO_QUESTIONS = {
+	"country": "country",
+	"state": "region",
+	"district": "district",
+	"farmer_group": "group",
+}
+
+# Fields written to the linked Farmer. Only ``village`` and ``farmer_group`` are
+# user-editable; ``district``/``state``/``country`` cascade from the village
+# (``fetch_from village.*``) — they are written explicitly as well because
+# ``frappe.db.set_value`` bypasses the fetch_from cascade.
+FARMER_GEO_FIELDS = ("village", "farmer_group", "district", "state", "country")
+
+# Master lookups are memoised for the duration of a sync run
+_MASTER_CACHE = {}
+
+
+def _find_master(doctype, fieldname, value, filters=None):
+	"""Find an existing master row by one of its own fields (DB collation is case-insensitive)."""
+	if not value:
+		return None
+
+	value = str(value).strip()
+	key = (doctype, fieldname, value, tuple(sorted((filters or {}).items())))
+	if key in _MASTER_CACHE:
+		return _MASTER_CACHE[key]
+
+	existing = frappe.db.get_value(doctype, {fieldname: value, **(filters or {})}, "name")
+	_MASTER_CACHE[key] = existing
+	return existing
+
+
+def _create_master(doctype, values, set_name=None):
+	"""Create a master row, filling only the fields that exist on the doctype."""
+	doc = frappe.new_doc(doctype)
+	for fieldname, value in values.items():
+		if value and hasattr(doc, fieldname):
+			doc.set(fieldname, value)
+
+	doc.flags.ignore_permissions = True
+	doc.insert(ignore_if_duplicate=True, set_name=set_name)
+	frappe.logger().info(f"[Kobo] Seeded {doctype} '{doc.name}'")
+
+	_MASTER_CACHE.clear()
+	return doc.name
+
+
+def _ensure_geography(sub):
+	"""Resolve — and seed when missing — the geography chain for a submission.
+
+	``Country → State → District → Ward → Village → Farmer Group``, built from the
+	Kobo answers in `KOBO_GEO_QUESTIONS`. Only values Kobo actually supplied are
+	used; a level is left out when the question was not answered.
+	"""
+	answers = {key: _get_kobo_value(sub, question) for key, question in KOBO_GEO_QUESTIONS.items()}
+	country = _find_master("Country", "country_name", answers["country"])
+	region = answers["state"]
+	district_value = answers["district"]
+	group = answers["farmer_group"]
+
+	state = _find_master("State", "state", region)
+	if not state and region:
+		state = _create_master("State", {"state": _title_case(region), "country": country})
+
+	district = _find_master("District", "district", district_value)
+	if not district and district_value:
+		district = _create_master(
+			"District",
+			{"district": _title_case(district_value), "state": state, "country": country},
+		)
+
+	ward = village = farmer_group = None
+	if group and district:
+		group_title = _title_case(group)
+
+		ward = _find_master("Ward", "ward", group_title, {"district": district})
+		if not ward:
+			ward = _create_master(
+				"Ward",
+				{"ward": group_title, "district": district, "state": state, "country": country},
+				set_name=f"{group_title}-{district}",
+			)
+
+		village = _find_master("Village", "village", group_title, {"district": district})
+		if not village:
+			village = _create_master(
+				"Village",
+				{
+					"village": group_title,
+					"ward": ward,
+					"district": district,
+					"state": state,
+					"country": country,
+				},
+			)
+
+		farmer_group = _find_master("Farmer Group", "farmer_group_name", group_title)
+		if not farmer_group:
+			# Named exactly as the Kobo choice label — the Kobo group answers already
+			# carry the district (e.g. 'Mahoma-Moshi-Rural'), so the doctype's
+			# '{farmer_group_name}-{district}' autoname would duplicate it.
+			farmer_group = _create_master(
+				"Farmer Group",
+				{
+					"farmer_group_name": group_title,
+					"village": village,
+					"district": district,
+					"state": state,
+					"country": country,
+				},
+				set_name=group_title,
+			)
+
+	return {
+		"country": country,
+		"state": state,
+		"district": district,
+		"village": village,
+		"farmer_group": farmer_group,
+	}
+
+
+def _sync_linked_farmer_geography(doc, sub):
+	"""Push the submission's geography onto the *linked* Farmer.
+
+	``state``, ``district``, ``farmer_group`` and ``gender`` on Farm Purchase
+	Intake are ``fetch_from`` the linked Farmer, so filling the Farmer is what
+	makes the Purchase Dashboard charts report the Kobo answers. Registered
+	Farmers are never overwritten — only empty fields are filled in.
+	"""
+	farmer = doc.get("farmer")
+	if not farmer or not sub:
+		return
+
+	geo = _ensure_geography(sub)
+	linked = frappe.db.get_value("Farmer", farmer, list(FARMER_GEO_FIELDS), as_dict=True) or {}
+
+	updates = {}
+	if geo.get("village") and not linked.get("village"):
+		updates["village"] = geo["village"]
+		for fieldname in ("district", "state", "country"):
+			if geo.get(fieldname):
+				updates[fieldname] = geo[fieldname]
+	if geo.get("farmer_group") and not linked.get("farmer_group"):
+		updates["farmer_group"] = geo["farmer_group"]
+
+	if updates:
+		frappe.db.set_value("Farmer", farmer, updates, update_modified=False)
+		frappe.logger().info(f"[Kobo] Linked Farmer '{farmer}' <- {updates}")
+
+	# refresh the purchase's cached fetch_from values
+	fresh = frappe.db.get_value(
+		"Farmer", farmer, ["farmer_group", "district", "state", "gender"], as_dict=True
+	) or {}
+	for fieldname, value in fresh.items():
+		if hasattr(doc, fieldname):
+			doc.set(fieldname, value)
+
+
+def _refresh_linked_farmer_cache(doc):
+	"""Persist the fetch_from values for a document that must not be re-saved.
+
+	Submitted purchases are skipped by the sync, so their cached ``state`` /
+	``district`` / ``farmer_group`` / ``gender`` are written directly — the same
+	way ``populate_purchase_dashboard_fields`` backfills them. The comparison is
+	made against the stored row, because ``doc`` may already hold the new values
+	(set by `_sync_linked_farmer_geography`).
+	"""
+	farmer = doc.get("farmer")
+	if not farmer:
+		return
+
+	fields = ("farmer_group", "district", "state", "gender")
+	values = frappe.db.get_value("Farmer", farmer, list(fields), as_dict=True) or {}
+	stored = frappe.db.get_value(doc.doctype, doc.name, list(fields), as_dict=True, cache=False) or {}
+
+	updates = {
+		fieldname: value
+		for fieldname, value in values.items()
+		if hasattr(doc, fieldname) and stored.get(fieldname) != value
+	}
+	if updates:
+		frappe.db.set_value(doc.doctype, doc.name, updates, update_modified=False)
 
 
 # ─── Value Normalization ──────────────────────────────────────────────────────

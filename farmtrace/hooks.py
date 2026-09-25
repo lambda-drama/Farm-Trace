@@ -81,6 +81,12 @@ doctype_js = {
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
+# Standard Dashboard Charts are shipped as JSON inside the app module folders
+# (farmtrace/farm_trace/dashboard_chart/<chart>/<chart>.json). Frappe only syncs
+# documents found in module folders for doctypes listed below, so this is what
+# makes `bench migrate` create/update the Purchase Dashboard charts.
+importable_doctypes = ["Dashboard Chart"]
+
 # Jinja
 # ----------
 

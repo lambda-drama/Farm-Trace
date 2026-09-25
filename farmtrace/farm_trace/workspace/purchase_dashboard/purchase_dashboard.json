@@ -1,0 +1,58 @@
+{
+ "app": "farmtrace",
+ "charts": [
+  {
+   "chart_name": "Procurement by Region",
+   "label": "By Region"
+  },
+  {
+   "chart_name": "Procurement by Farmer Group",
+   "label": "By Farmer Group"
+  },
+  {
+   "chart_name": "Procurement by Payment Method",
+   "label": "By Payment Method"
+  },
+  {
+   "chart_name": "Payment by Mobile Service Provider",
+   "label": "By Mobile Provider"
+  },
+  {
+   "chart_name": "Purchase Summary by Gender",
+   "label": "By Gender"
+  }
+ ],
+ "content": "[{\"id\":\"purchaseDashTitle\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Dashboard</b></span>\",\"col\":12}},{\"id\":\"purchaseDashSubtitle\",\"type\":\"paragraph\",\"data\":{\"text\":\"Procurement analytics for Farm Purchase Intake records by region, farmer group, payment method, mobile money provider and farmer gender.\",\"col\":12}},{\"id\":\"purchaseDashProcurement\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Procurement</span>\",\"col\":12}},{\"id\":\"purchaseDashChartRegion\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Region\",\"col\":6}},{\"id\":\"purchaseDashChartFarmerGroup\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Farmer Group\",\"col\":6}},{\"id\":\"purchaseDashSep1\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"separator\",\"col\":12}},{\"id\":\"purchaseDashPayments\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Payments</span>\",\"col\":12}},{\"id\":\"purchaseDashChartPaymentMethod\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Payment Method\",\"col\":6}},{\"id\":\"purchaseDashChartMobileProvider\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Payment by Mobile Service Provider\",\"col\":6}},{\"id\":\"purchaseDashSep2\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"separator\",\"col\":12}},{\"id\":\"purchaseDashGender\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Purchase Value by Gender</span>\",\"col\":12}},{\"id\":\"purchaseDashChartGender\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Summary by Gender\",\"col\":12}}]",
+ "creation": "2026-09-26 01:37:53.575350",
+ "custom_blocks": [
+  {
+   "custom_block_name": "separator",
+   "label": "separator"
+  }
+ ],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "chart-bar",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Purchase Dashboard",
+ "link_type": "DocType",
+ "links": [],
+ "modified": "2026-09-26 01:37:53.575350",
+ "modified_by": "Administrator",
+ "module": "Farm Trace",
+ "name": "Purchase Dashboard",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Farm Trace",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 24.0,
+ "shortcuts": [],
+ "title": "Purchase Dashboard",
+ "type": "Workspace"
+}
