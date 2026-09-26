@@ -2,6 +2,7 @@
 # In farmtrace/farm_trace/api.py
 import frappe
 
+
 @frappe.whitelist()
 def get_farm_locations():
     return frappe.get_all(

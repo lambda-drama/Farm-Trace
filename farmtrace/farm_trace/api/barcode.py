@@ -1,7 +1,8 @@
-import frappe
 import random
 from datetime import date
+
 import barcode
+import frappe
 from barcode.writer import ImageWriter
 
 

@@ -5,7 +5,6 @@ import frappe
 from frappe import _
 from frappe.utils import cint, flt, getdate
 
-
 # ─── Constants ────────────────────────────────────────────────────────────────
 
 # Fields that must NEVER be normalized — store exactly as Kobo sends them
@@ -1042,7 +1041,7 @@ def _log_sync(sync_type, triggered_by, created, updated, failed, errors, kobo_re
 	)
 	log.insert(ignore_permissions=True)
 	frappe.db.commit()
- 
+
 def _fix_image_orientation(content, fname):
 	"""
 	Auto-rotate image based on EXIF orientation tag.
@@ -1050,8 +1049,9 @@ def _fix_image_orientation(content, fname):
 	which causes images to appear rotated in ERPNext.
 	"""
 	try:
-		from PIL import Image, ExifTags
 		import io
+
+		from PIL import ExifTags, Image
 
 		img = Image.open(io.BytesIO(content))
 
