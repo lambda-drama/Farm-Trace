@@ -8,21 +8,20 @@ frappe.ui.form.on("Ward", {
 			frm.trigger("district");
 		}
 	},
-	
+
 	district(frm) {
 		if (frm.doc.district) {
-			frappe.db.get_doc("District", frm.doc.district)
-				.then(doc => {
-					if (doc.state) {
-						frm.set_value("state", doc.state);
-					}
-					if (doc.country) {
-						frm.set_value("country", doc.country);
-					}
-				});
+			frappe.db.get_doc("District", frm.doc.district).then((doc) => {
+				if (doc.state) {
+					frm.set_value("state", doc.state);
+				}
+				if (doc.country) {
+					frm.set_value("country", doc.country);
+				}
+			});
 		} else {
 			frm.set_value("state", "");
 			frm.set_value("country", "");
 		}
-	}
+	},
 });

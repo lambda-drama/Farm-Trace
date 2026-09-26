@@ -42,18 +42,12 @@ app_license = "agpl-3.0"
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
-app_include_js = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-]
+app_include_js = ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"]
 
-app_include_css = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-]
+app_include_css = ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]
 
 # include js in doctype views
-doctype_js = {
-    "Purchase Receipt": "public/js/purchase_receipt.js"
-}
+doctype_js = {"Purchase Receipt": "public/js/purchase_receipt.js"}
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -81,11 +75,12 @@ doctype_js = {
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
-# Standard Dashboard Charts are shipped as JSON inside the app module folders
-# (farmtrace/farm_trace/dashboard_chart/<chart>/<chart>.json). Frappe only syncs
+# Standard Dashboard Charts and Number Cards are shipped as JSON inside the app
+# module folders (farmtrace/farm_trace/dashboard_chart/<chart>/<chart>.json and
+# farmtrace/farm_trace/number_card/<card>/<card>.json). Frappe only syncs
 # documents found in module folders for doctypes listed below, so this is what
-# makes `bench migrate` create/update the Purchase Dashboard charts.
-importable_doctypes = ["Dashboard Chart"]
+# makes `bench migrate` create/update the Purchase Dashboard charts and cards.
+importable_doctypes = ["Dashboard Chart", "Number Card"]
 
 # Jinja
 # ----------
@@ -99,23 +94,43 @@ importable_doctypes = ["Dashboard Chart"]
 # Installation
 # ------------
 
-# Fixtures (Custom HTML Block "Farms Map" created during migrate)
+# Fixtures (Custom HTML Block panels created/updated during migrate)
 fixtures = [
-    {
-        "dt": "Custom HTML Block",
-        "filters": [
-            ["name", "in", ["Farms Map", "Separator","Farm Satelite Map"]]
-        ]
-    },
-    {
-        "dt": "Custom Field",
-        "filters": [
-            ["name", "in", [
-                "Purchase Receipt Item-farm_purchase_intake",
-                "Purchase Receipt Item-custom_transaction_barcode",
-            ]]
-        ],
-    },
+	{
+		"dt": "Custom HTML Block",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Farms Map",
+					"Separator",
+					"Farm Satelite Map",
+					"Compliance by standard",
+					"Field activity",
+					"Premium to farmers",
+					"Contracts",
+					"Markets still open",
+					"Groups",
+					"Latest purchases",
+					"Officer activity",
+				],
+			]
+		],
+	},
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Purchase Receipt Item-farm_purchase_intake",
+					"Purchase Receipt Item-custom_transaction_barcode",
+				],
+			]
+		],
+	},
 ]
 
 
@@ -297,5 +312,4 @@ doc_events = {
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
-#NOt working
-
+# NOt working

@@ -1,0 +1,21 @@
+{
+ "color": "#f59e0b",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Farm Purchase Intake",
+ "dynamic_filters_json": "[]",
+ "filters_json": "[]",
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Open markets",
+ "method": "farmtrace.farm_trace.api.purchase_dashboard.get_open_markets",
+ "modified": "2026-09-26 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Farm Trace",
+ "name": "Open markets",
+ "owner": "Administrator",
+ "show_full_number": 0,
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Monthly",
+ "type": "Custom"
+}

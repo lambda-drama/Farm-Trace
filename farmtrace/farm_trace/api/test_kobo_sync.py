@@ -46,9 +46,7 @@ class TestKoboSync(FrappeTestCase):
 				"target_field": "quantity",
 			},
 		]
-		parent_map, child_maps = _split_field_mappings(
-			mappings, target_doctype="Farm Purchase Intake"
-		)
+		parent_map, child_maps = _split_field_mappings(mappings, target_doctype="Farm Purchase Intake")
 		self.assertEqual(parent_map, {"farmer": "farmer"})
 		self.assertEqual(
 			child_maps[("crop_procurement/bag", "items")],
@@ -68,9 +66,7 @@ class TestKoboSync(FrappeTestCase):
 				"target_field": "quantity",
 			},
 		]
-		_, child_maps = _split_field_mappings(
-			mappings, target_doctype="Farm Purchase Intake"
-		)
+		_, child_maps = _split_field_mappings(mappings, target_doctype="Farm Purchase Intake")
 		self.assertEqual(
 			child_maps[("crop_procurement/bag", "items")],
 			{"barcode": "barcode", "bag_weight": "quantity"},
@@ -84,9 +80,7 @@ class TestKoboSync(FrappeTestCase):
 				"target_child_table": "items",
 			},
 		]
-		parent_map, child_maps = _split_field_mappings(
-			mappings, target_doctype="Farm Purchase Intake"
-		)
+		parent_map, child_maps = _split_field_mappings(mappings, target_doctype="Farm Purchase Intake")
 		self.assertEqual(parent_map, {"_submitted_by": "submitted_byuser"})
 		self.assertEqual(child_maps, {})
 

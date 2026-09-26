@@ -48,10 +48,10 @@ function setup_purchase_receipt_buttons(frm) {
 		return;
 	}
 
-	frm.add_custom_button(__("Purchase Receipt"), () => {
-		frappe.confirm(
-			__("Create a draft Purchase Receipt from this intake?"),
-			() => {
+	frm.add_custom_button(
+		__("Purchase Receipt"),
+		() => {
+			frappe.confirm(__("Create a draft Purchase Receipt from this intake?"), () => {
 				frappe.call({
 					method: "farmtrace.controller.purchase_receipt.create_purchase_receipt_from_intake",
 					args: {
@@ -72,9 +72,10 @@ function setup_purchase_receipt_buttons(frm) {
 						});
 					},
 				});
-			}
-		);
-	}, __("Create"));
+			});
+		},
+		__("Create")
+	);
 }
 
 function set_season_from_purchase_date(frm) {
@@ -97,7 +98,7 @@ function calculate_totals(frm) {
 	let total_qty = 0;
 	let total_amount = 0;
 
-	(frm.doc.items || []).forEach(row => {
+	(frm.doc.items || []).forEach((row) => {
 		total_qty += flt(row.quantity);
 		total_amount += flt(row.amount);
 	});
