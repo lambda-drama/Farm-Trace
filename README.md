@@ -1,5 +1,7 @@
 ### Farm Trace
 
+[![CI](https://github.com/lambda-drama/Farm-Trace/actions/workflows/ci.yml/badge.svg)](https://github.com/lambda-drama/Farm-Trace/actions/workflows/ci.yml)
+
 Farm Trace
 
 ### Installation
