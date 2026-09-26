@@ -20,14 +20,16 @@ def get_farm_locations():
 			lat_f = float(str(lat).strip())
 			lng_f = float(str(lng).strip())
 			if -90 <= lat_f <= 90 and -180 <= lng_f <= 180:
-				result.append({
-					"name": f["name"],
-					"farm_name": f.get("farm_name"),
-					"farmer": f.get("farmer"),
-					"village": f.get("village"),
-					"latitude": str(lat_f),
-					"longitude": str(lng_f),
-				})
+				result.append(
+					{
+						"name": f["name"],
+						"farm_name": f.get("farm_name"),
+						"farmer": f.get("farmer"),
+						"village": f.get("village"),
+						"latitude": str(lat_f),
+						"longitude": str(lng_f),
+					}
+				)
 		except (ValueError, TypeError):
 			pass
 	return result

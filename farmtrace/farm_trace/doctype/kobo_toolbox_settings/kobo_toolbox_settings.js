@@ -28,7 +28,6 @@
 
 frappe.ui.form.on("Kobo Toolbox Settings", {
 	refresh: function (frm) {
-
 		// ---------------------------
 		// EXISTING SYNC BUTTON
 		// ---------------------------
@@ -55,7 +54,6 @@ frappe.ui.form.on("Kobo Toolbox Settings", {
 		// GENERATE BARCODE BUTTON
 		// ---------------------------
 		frm.add_custom_button(__("Generate Barcodes"), function () {
-
 			let d = new frappe.ui.Dialog({
 				title: __("Generate EAN Barcodes"),
 				fields: [
@@ -64,12 +62,11 @@ frappe.ui.form.on("Kobo Toolbox Settings", {
 						fieldname: "qty",
 						fieldtype: "Int",
 						reqd: 1,
-						default: 1
-					}
+						default: 1,
+					},
 				],
 				primary_action_label: __("Generate"),
 				primary_action(values) {
-
 					if (!values.qty || values.qty <= 0) {
 						frappe.msgprint(__("Enter a valid quantity"));
 						return;
@@ -80,7 +77,7 @@ frappe.ui.form.on("Kobo Toolbox Settings", {
 					frappe.call({
 						method: "farmtrace.farm_trace.api.barcode.generate_barcodes",
 						args: {
-							qty: values.qty
+							qty: values.qty,
 						},
 						freeze: true,
 						freeze_message: __("Generating barcodes..."),
@@ -88,16 +85,15 @@ frappe.ui.form.on("Kobo Toolbox Settings", {
 							if (!r.exc) {
 								frappe.msgprint({
 									title: __("Success"),
-									message: __(
-										"{0} barcodes created successfully",
-										[r.message || 0]
-									),
+									message: __("{0} barcodes created successfully", [
+										r.message || 0,
+									]),
 									indicator: "green",
 								});
 							}
-						}
+						},
 					});
-				}
+				},
 			});
 
 			d.show();

@@ -59,9 +59,7 @@ def _validate_intake_for_receipt(intake):
 
 	if intake.receipt_created and intake.purchase_receipt:
 		frappe.throw(
-			_("Purchase Receipt {0} already exists for {1}").format(
-				intake.purchase_receipt, intake.name
-			)
+			_("Purchase Receipt {0} already exists for {1}").format(intake.purchase_receipt, intake.name)
 		)
 
 	if not intake.items:
@@ -72,9 +70,7 @@ def _build_pr_item_row(intake, row, warehouse):
 	if not row.item:
 		frappe.throw(_("Item missing in collected produce row for intake {0}").format(intake.name))
 
-	item_details = frappe.db.get_value(
-		"Item", row.item, ["item_name", "stock_uom"], as_dict=True
-	) or {}
+	item_details = frappe.db.get_value("Item", row.item, ["item_name", "stock_uom"], as_dict=True) or {}
 	uom = intake.uom or item_details.get("stock_uom")
 	stock_uom = item_details.get("stock_uom") or uom
 

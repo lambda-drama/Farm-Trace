@@ -16,6 +16,3 @@ class Farmer(Document):
 			full_name = " ".join(p for p in parts if p)
 			if full_name:
 				self.full_name = full_name.strip()
-
-
-

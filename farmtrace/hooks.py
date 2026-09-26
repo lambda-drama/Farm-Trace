@@ -42,18 +42,12 @@ app_license = "agpl-3.0"
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
-app_include_js = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-]
+app_include_js = ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"]
 
-app_include_css = [
-    "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-]
+app_include_css = ["https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]
 
 # include js in doctype views
-doctype_js = {
-    "Purchase Receipt": "public/js/purchase_receipt.js"
-}
+doctype_js = {"Purchase Receipt": "public/js/purchase_receipt.js"}
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -102,37 +96,41 @@ importable_doctypes = ["Dashboard Chart", "Number Card"]
 
 # Fixtures (Custom HTML Block panels created/updated during migrate)
 fixtures = [
-    {
-        "dt": "Custom HTML Block",
-        "filters": [
-            [
-                "name",
-                "in",
-                [
-                    "Farms Map",
-                    "Separator",
-                    "Farm Satelite Map",
-                    "Compliance by standard",
-                    "Field activity",
-                    "Premium to farmers",
-                    "Contracts",
-                    "Markets still open",
-                    "Groups",
-                    "Latest purchases",
-                    "Officer activity",
-                ],
-            ]
-        ],
-    },
-    {
-        "dt": "Custom Field",
-        "filters": [
-            ["name", "in", [
-                "Purchase Receipt Item-farm_purchase_intake",
-                "Purchase Receipt Item-custom_transaction_barcode",
-            ]]
-        ],
-    },
+	{
+		"dt": "Custom HTML Block",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Farms Map",
+					"Separator",
+					"Farm Satelite Map",
+					"Compliance by standard",
+					"Field activity",
+					"Premium to farmers",
+					"Contracts",
+					"Markets still open",
+					"Groups",
+					"Latest purchases",
+					"Officer activity",
+				],
+			]
+		],
+	},
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Purchase Receipt Item-farm_purchase_intake",
+					"Purchase Receipt Item-custom_transaction_barcode",
+				],
+			]
+		],
+	},
 ]
 
 
@@ -314,5 +312,4 @@ doc_events = {
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
-#NOt working
-
+# NOt working

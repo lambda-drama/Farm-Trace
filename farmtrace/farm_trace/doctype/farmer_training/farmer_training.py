@@ -7,5 +7,3 @@ from frappe.model.document import Document
 
 class FarmerTraining(Document):
 	pass
-
-

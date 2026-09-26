@@ -13,7 +13,7 @@ RAW_VALUE_FIELDS = {"landmark", "farm_boundary", "gps", "farm_gps", "boundary"}
 # Maps: target_doctype -> (image_field_on_doc, xpath_keywords_to_match)
 DOCTYPE_IMAGE_CONFIG = {
 	"Farmer": ("contract_image", ["photo_farmer", "farmer_photo", "photo"]),
-	"Farm":   ("photo",          ["photo_farm", "farm_photo", "photo"]),
+	"Farm": ("photo", ["photo_farm", "farm_photo", "photo"]),
 }
 
 
@@ -29,6 +29,7 @@ PAYMENT_METHOD_MAP = {
 
 
 # ─── Public API ───────────────────────────────────────────────────────────────
+
 
 @frappe.whitelist()
 def sync_now():
@@ -103,12 +104,15 @@ def run_kobo_sync(triggered_by="Scheduled", settings=None):
 			triggered_by=triggered_by,
 		)
 		if result:
-			msg_parts.append(f"{config_doc.form_name or config_doc.target_doctype}: {result.get('message', '')}")
+			msg_parts.append(
+				f"{config_doc.form_name or config_doc.target_doctype}: {result.get('message', '')}"
+			)
 
 	return {"success": True, "message": "; ".join(msg_parts)}
 
 
 # ─── Core Sync ────────────────────────────────────────────────────────────────
+
 
 def _sync_single_form(base_url, headers, config, triggered_by):
 	"""Sync one Kobo form to its target DocType."""
@@ -195,6 +199,7 @@ def _sync_single_form(base_url, headers, config, triggered_by):
 
 
 # ─── Field Mapping & Value Extraction ─────────────────────────────────────────
+
 
 def _get_kobo_value(sub, kobo_key):
 	"""
@@ -283,7 +288,9 @@ def _get_kobo_repeat_group(sub, repeat_group_key, field_map=None):
 		if parts:
 			scalar_field = next(iter(field_map.keys()), None) if field_map else None
 			if not scalar_field:
-				scalar_field = repeat_group_key.split("/")[-1] if "/" in repeat_group_key else repeat_group_key
+				scalar_field = (
+					repeat_group_key.split("/")[-1] if "/" in repeat_group_key else repeat_group_key
+				)
 			return [{scalar_field: part} for part in parts]
 
 	return []
@@ -565,9 +572,10 @@ def _sync_linked_farmer_geography(doc, sub):
 		frappe.logger().info(f"[Kobo] Linked Farmer '{farmer}' <- {updates}")
 
 	# refresh the purchase's cached fetch_from values
-	fresh = frappe.db.get_value(
-		"Farmer", farmer, ["farmer_group", "district", "state", "gender"], as_dict=True
-	) or {}
+	fresh = (
+		frappe.db.get_value("Farmer", farmer, ["farmer_group", "district", "state", "gender"], as_dict=True)
+		or {}
+	)
 	for fieldname, value in fresh.items():
 		if hasattr(doc, fieldname):
 			doc.set(fieldname, value)
@@ -601,6 +609,7 @@ def _refresh_linked_farmer_cache(doc):
 
 # ─── Value Normalization ──────────────────────────────────────────────────────
 
+
 def _is_raw_coordinate_value(value):
 	"""
 	Detect GPS/boundary strings that must not be normalized.
@@ -612,11 +621,7 @@ def _is_raw_coordinate_value(value):
 	return ";" in v or (
 		v.count(" ") >= 1
 		and any(c in v for c in ["-", "."])
-		and all(
-			part.lstrip("-").replace(".", "").isdigit()
-			for part in v.split(" ")[:2]
-			if part
-		)
+		and all(part.lstrip("-").replace(".", "").isdigit() for part in v.split(" ")[:2] if part)
 	)
 
 
@@ -715,7 +720,7 @@ def _normalize_value_for_field(meta, fieldname, value):
 		frappe.log_error(
 			f"Select field '{fieldname}' has no option matching '{value}' "
 			f"(tried human form: '{human}'). Available options: {options}",
-			"Kobo Select Mismatch"
+			"Kobo Select Mismatch",
 		)
 		return value
 
@@ -760,10 +765,7 @@ def _resolve_link_fields(target_doctype, values, sub=None):
 							break
 			if existing:
 				values[fieldname] = existing
-			elif (
-				df.options == "Farmer"
-				and target_doctype in FARMER_AUTO_CREATE_DOCTYPES
-			):
+			elif df.options == "Farmer" and target_doctype in FARMER_AUTO_CREATE_DOCTYPES:
 				values[fieldname] = _get_or_create_farmer(value, sub=sub)
 	return values
 
@@ -796,10 +798,7 @@ def _get_or_create_farmer(farmer_ref, sub=None):
 		if first_name:
 			doc.first_name = str(first_name).strip()
 
-		last_name = (
-			_get_kobo_value(sub, "surname")
-			or _get_kobo_value(sub, "last_name")
-		)
+		last_name = _get_kobo_value(sub, "surname") or _get_kobo_value(sub, "last_name")
 		if last_name:
 			doc.last_name = str(last_name).strip()
 
@@ -829,6 +828,7 @@ def _fill_required_fields(doc, target_doctype, match_field, match_val, values, s
 
 # ─── Farm-Specific Post-Processing ───────────────────────────────────────────
 
+
 def _post_process_farm_doc(doc, sub, target_doctype):
 	"""
 	Farm-specific post-processing after normal field mapping.
@@ -845,11 +845,7 @@ def _post_process_farm_doc(doc, sub, target_doctype):
 	# ── farm_gps → latitude + longitude ──────────────────────────────────────
 	# Kobo format: "-3.3656872 36.7059021 1454.5 4.942"
 	#               [0]=lat    [1]=lng    [2]=alt [3]=accuracy (ignore 2 & 3)
-	gps_raw = (
-		sub.get("farmer_registration/farm_gps")
-		or sub.get("farm_gps")
-		or ""
-	)
+	gps_raw = sub.get("farmer_registration/farm_gps") or sub.get("farm_gps") or ""
 	if gps_raw:
 		parts = str(gps_raw).strip().split()
 		if len(parts) >= 2:
@@ -860,31 +856,23 @@ def _post_process_farm_doc(doc, sub, target_doctype):
 					doc.latitude = lat
 				if hasattr(doc, "longitude"):
 					doc.longitude = lng
-				frappe.logger().info(
-					f"[Kobo] Farm '{doc.name}' → latitude={lat}, longitude={lng}"
-				)
+				frappe.logger().info(f"[Kobo] Farm '{doc.name}' → latitude={lat}, longitude={lng}")
 			except ValueError:
 				frappe.log_error(
-					f"Cannot parse farm_gps '{gps_raw}' for Farm '{doc.name}'",
-					"Kobo GPS Parse Error"
+					f"Cannot parse farm_gps '{gps_raw}' for Farm '{doc.name}'", "Kobo GPS Parse Error"
 				)
 
 	# ── farm_boundary → landmark (RAW — no formatting whatsoever) ────────────
 	# Kobo format: "-3.3658215 36.7059214 1454.9 2.7;-3.3658175 36.7059043 ..."
 	# Store exactly as-is so the JS Leaflet polygon parser works correctly.
-	boundary_raw = (
-		sub.get("farmer_registration/farm_boundary")
-		or sub.get("farm_boundary")
-		or ""
-	)
+	boundary_raw = sub.get("farmer_registration/farm_boundary") or sub.get("farm_boundary") or ""
 	if boundary_raw and hasattr(doc, "landmark"):
 		doc.landmark = str(boundary_raw).strip()
-		frappe.logger().info(
-			f"[Kobo] Farm '{doc.name}' → landmark set ({len(doc.landmark)} chars)"
-		)
+		frappe.logger().info(f"[Kobo] Farm '{doc.name}' → landmark set ({len(doc.landmark)} chars)")
 
 
 # ─── Image Attachment ─────────────────────────────────────────────────────────
+
 
 def _attach_kobo_image_to_doc(doc, sub, headers, target_doctype):
 	config = DOCTYPE_IMAGE_CONFIG.get(target_doctype)
@@ -932,13 +920,13 @@ def _attach_kobo_image_to_doc(doc, sub, headers, target_doctype):
 
 	try:
 		import requests
+
 		resp = requests.get(download_url, headers=headers, timeout=30)
 		resp.raise_for_status()
 		content = resp.content
 	except Exception as e:
 		frappe.log_error(
-			f"Failed to download Kobo image for {target_doctype} '{doc.name}': {e}",
-			"Kobo Image Download"
+			f"Failed to download Kobo image for {target_doctype} '{doc.name}': {e}", "Kobo Image Download"
 		)
 		return
 
@@ -955,6 +943,7 @@ def _attach_kobo_image_to_doc(doc, sub, headers, target_doctype):
 	# ── Step 4: Save and attach ───────────────────────────────────────────────
 	try:
 		from frappe.utils.file_manager import save_file
+
 		file_doc = save_file(
 			fname=fname,
 			content=content,
@@ -974,11 +963,12 @@ def _attach_kobo_image_to_doc(doc, sub, headers, target_doctype):
 	except Exception as e:
 		frappe.log_error(
 			f"Failed to save Kobo image for {target_doctype} '{doc.name}' field '{image_field}': {e}",
-			"Kobo Image Save"
+			"Kobo Image Save",
 		)
 
 
 # ─── Kobo API ─────────────────────────────────────────────────────────────────
+
 
 def _fetch_kobo_submissions(base_url, headers, asset_uid):
 	"""Fetch all submissions from Kobo API v2, following pagination.
@@ -1018,8 +1008,10 @@ def _fetch_kobo_submissions(base_url, headers, asset_uid):
 
 # ─── Sync Logging ─────────────────────────────────────────────────────────────
 
+
 def _log_sync(sync_type, triggered_by, created, updated, failed, errors, kobo_response=None):
 	from frappe.utils import now
+
 	status = "Success" if failed == 0 else ("Failed" if created == 0 and updated == 0 else "Partial")
 	response_stored = (
 		(kobo_response[:100000] + "\n... (truncated)")
@@ -1041,6 +1033,7 @@ def _log_sync(sync_type, triggered_by, created, updated, failed, errors, kobo_re
 	)
 	log.insert(ignore_permissions=True)
 	frappe.db.commit()
+
 
 def _fix_image_orientation(content, fname):
 	"""
@@ -1074,7 +1067,7 @@ def _fix_image_orientation(content, fname):
 		# Rotate/flip based on EXIF value
 		rotations = {
 			3: 180,
-			6: 270,   # Most common phone portrait: rotate 270 (or -90)
+			6: 270,  # Most common phone portrait: rotate 270 (or -90)
 			8: 90,
 		}
 		flips = {

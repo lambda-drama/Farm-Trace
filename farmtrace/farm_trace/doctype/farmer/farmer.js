@@ -2,9 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Farmer", {
-
 	refresh(frm) {
-
 		// Render age if already saved
 		if (frm.doc.dob) {
 			calculate_age(frm);
@@ -19,12 +17,11 @@ frappe.ui.form.on("Farmer", {
 
 	village(frm) {
 		if (frm.doc.village) {
-			frappe.db.get_doc("Village", frm.doc.village)
-				.then(doc => {
-					frm.set_value("district", doc.district || "");
-					frm.set_value("state", doc.state || "");
-					frm.set_value("country", doc.country || "");
-				});
+			frappe.db.get_doc("Village", frm.doc.village).then((doc) => {
+				frm.set_value("district", doc.district || "");
+				frm.set_value("state", doc.state || "");
+				frm.set_value("country", doc.country || "");
+			});
 		} else {
 			frm.set_value("district", "");
 			frm.set_value("state", "");
@@ -39,15 +36,13 @@ frappe.ui.form.on("Farmer", {
 
 	validate(frm) {
 		calculate_age(frm);
-	}
+	},
 });
 
-
 function calculate_age(frm) {
-
 	if (!frm.doc.dob) {
 		frm.set_value("age", null);
-		$(frm.fields_dict['full_age'].wrapper).html('');
+		$(frm.fields_dict["full_age"].wrapper).html("");
 		return;
 	}
 
@@ -56,9 +51,9 @@ function calculate_age(frm) {
 
 	// Prevent future date
 	if (today < birthDate) {
-		frappe.msgprint(__('Please select a valid Date of Birth'));
-		frm.set_value('dob', '');
-		$(frm.fields_dict['full_age'].wrapper).html('');
+		frappe.msgprint(__("Please select a valid Date of Birth"));
+		frm.set_value("dob", "");
+		$(frm.fields_dict["full_age"].wrapper).html("");
 		return;
 	}
 
@@ -81,7 +76,7 @@ function calculate_age(frm) {
 	frm.set_value("age", years);
 
 	// Proper HTML rendering (THIS is what was missing)
-	$(frm.fields_dict['full_age'].wrapper).html(
+	$(frm.fields_dict["full_age"].wrapper).html(
 		`<div style="font-weight:600;">
 			${years} years, ${months} months, ${days} days
 		</div>`
