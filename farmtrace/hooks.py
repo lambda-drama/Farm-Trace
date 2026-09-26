@@ -81,11 +81,12 @@ doctype_js = {
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
-# Standard Dashboard Charts are shipped as JSON inside the app module folders
-# (farmtrace/farm_trace/dashboard_chart/<chart>/<chart>.json). Frappe only syncs
+# Standard Dashboard Charts and Number Cards are shipped as JSON inside the app
+# module folders (farmtrace/farm_trace/dashboard_chart/<chart>/<chart>.json and
+# farmtrace/farm_trace/number_card/<card>/<card>.json). Frappe only syncs
 # documents found in module folders for doctypes listed below, so this is what
-# makes `bench migrate` create/update the Purchase Dashboard charts.
-importable_doctypes = ["Dashboard Chart"]
+# makes `bench migrate` create/update the Purchase Dashboard charts and cards.
+importable_doctypes = ["Dashboard Chart", "Number Card"]
 
 # Jinja
 # ----------
@@ -99,13 +100,29 @@ importable_doctypes = ["Dashboard Chart"]
 # Installation
 # ------------
 
-# Fixtures (Custom HTML Block "Farms Map" created during migrate)
+# Fixtures (Custom HTML Block panels created/updated during migrate)
 fixtures = [
     {
         "dt": "Custom HTML Block",
         "filters": [
-            ["name", "in", ["Farms Map", "Separator","Farm Satelite Map"]]
-        ]
+            [
+                "name",
+                "in",
+                [
+                    "Farms Map",
+                    "Separator",
+                    "Farm Satelite Map",
+                    "Compliance by standard",
+                    "Field activity",
+                    "Premium to farmers",
+                    "Contracts",
+                    "Markets still open",
+                    "Groups",
+                    "Latest purchases",
+                    "Officer activity",
+                ],
+            ]
+        ],
     },
     {
         "dt": "Custom Field",

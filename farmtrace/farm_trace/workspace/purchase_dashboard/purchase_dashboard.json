@@ -2,32 +2,68 @@
  "app": "farmtrace",
  "charts": [
   {
+   "chart_name": "Kg Bought per Week",
+   "label": "Kg bought per week"
+  },
+  {
+   "chart_name": "Kg Bought by District",
+   "label": "Kg bought by district"
+  },
+  {
    "chart_name": "Procurement by Region",
-   "label": "By Region"
+   "label": "Procurement by Region"
   },
   {
    "chart_name": "Procurement by Farmer Group",
-   "label": "By Farmer Group"
+   "label": "Procurement by Farmer Group"
   },
   {
    "chart_name": "Procurement by Payment Method",
-   "label": "By Payment Method"
+   "label": "Procurement by Payment Method"
   },
   {
    "chart_name": "Payment by Mobile Service Provider",
-   "label": "By Mobile Provider"
+   "label": "Payment by Mobile Service Provider"
   },
   {
    "chart_name": "Purchase Summary by Gender",
-   "label": "By Gender"
+   "label": "Purchase Summary by Gender"
   }
  ],
- "content": "[{\"id\":\"purchaseDashTitle\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Dashboard</b></span>\",\"col\":12}},{\"id\":\"purchaseDashSubtitle\",\"type\":\"paragraph\",\"data\":{\"text\":\"Procurement analytics for Farm Purchase Intake records by region, farmer group, payment method, mobile money provider and farmer gender.\",\"col\":12}},{\"id\":\"purchaseDashProcurement\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Procurement</span>\",\"col\":12}},{\"id\":\"purchaseDashChartRegion\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Region\",\"col\":6}},{\"id\":\"purchaseDashChartFarmerGroup\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Farmer Group\",\"col\":6}},{\"id\":\"purchaseDashSep1\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"separator\",\"col\":12}},{\"id\":\"purchaseDashPayments\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Payments</span>\",\"col\":12}},{\"id\":\"purchaseDashChartPaymentMethod\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Payment Method\",\"col\":6}},{\"id\":\"purchaseDashChartMobileProvider\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Payment by Mobile Service Provider\",\"col\":6}},{\"id\":\"purchaseDashSep2\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"separator\",\"col\":12}},{\"id\":\"purchaseDashGender\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Purchase Value by Gender</span>\",\"col\":12}},{\"id\":\"purchaseDashChartGender\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Summary by Gender\",\"col\":12}}]",
+ "content": "[{\"id\":\"purchaseDashTitle\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Purchase Dashboard</b></span>\",\"col\":12}},{\"id\":\"purchaseDashSubtitle\",\"type\":\"paragraph\",\"data\":{\"text\":\"Procurement, market centres, field activity and compliance for every Farm Purchase Intake record. All quantities are kilograms.\",\"col\":12}},{\"id\":\"purchaseDashCardFarmers\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Farmers\",\"col\":2}},{\"id\":\"purchaseDashCardFarms\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Farms\",\"col\":2}},{\"id\":\"purchaseDashCardHectares\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Hectares\",\"col\":2}},{\"id\":\"purchaseDashCardKgBought\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Kg bought\",\"col\":2}},{\"id\":\"purchaseDashCardKgDispatched\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Kg dispatched\",\"col\":2}},{\"id\":\"purchaseDashCardOpenMarkets\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open markets\",\"col\":2}},{\"id\":\"purchaseDashCompliance\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Compliance by standard\",\"col\":6}},{\"id\":\"purchaseDashChartWeeklyKg\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Kg bought per week\",\"col\":6}},{\"id\":\"purchaseDashFieldActivity\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Field activity\",\"col\":6}},{\"id\":\"purchaseDashPremium\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Premium to farmers\",\"col\":6}},{\"id\":\"purchaseDashContracts\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Contracts\",\"col\":12}},{\"id\":\"purchaseDashMarkets\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Markets still open\",\"col\":12}},{\"id\":\"purchaseDashGroups\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Groups\",\"col\":12}},{\"id\":\"purchaseDashProcurement\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Procurement</span>\",\"col\":12}},{\"id\":\"purchaseDashChartRegion\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Region\",\"col\":6}},{\"id\":\"purchaseDashChartFarmerGroup\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Farmer Group\",\"col\":6}},{\"id\":\"purchaseDashChartPaymentMethod\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Procurement by Payment Method\",\"col\":6}},{\"id\":\"purchaseDashChartMobileProvider\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Payment by Mobile Service Provider\",\"col\":6}},{\"id\":\"purchaseDashChartDistrict\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Kg bought by district\",\"col\":6}},{\"id\":\"purchaseDashChartGender\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Summary by Gender\",\"col\":6}},{\"id\":\"purchaseDashOperations\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h5\\\">Daily operations</span>\",\"col\":12}},{\"id\":\"purchaseDashLatest\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Latest purchases\",\"col\":6}},{\"id\":\"purchaseDashOfficers\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Officer activity\",\"col\":6}}]",
  "creation": "2026-09-26 01:37:53.575350",
  "custom_blocks": [
   {
-   "custom_block_name": "separator",
-   "label": "separator"
+   "custom_block_name": "Compliance by standard",
+   "label": "Compliance by standard"
+  },
+  {
+   "custom_block_name": "Field activity",
+   "label": "Field activity"
+  },
+  {
+   "custom_block_name": "Premium to farmers",
+   "label": "Premium to farmers"
+  },
+  {
+   "custom_block_name": "Contracts",
+   "label": "Contracts"
+  },
+  {
+   "custom_block_name": "Markets still open",
+   "label": "Markets still open"
+  },
+  {
+   "custom_block_name": "Groups",
+   "label": "Groups"
+  },
+  {
+   "custom_block_name": "Latest purchases",
+   "label": "Latest purchases"
+  },
+  {
+   "custom_block_name": "Officer activity",
+   "label": "Officer activity"
   }
  ],
  "docstatus": 0,
@@ -41,11 +77,36 @@
  "label": "Purchase Dashboard",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-09-26 01:37:53.575350",
+ "modified": "2026-09-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Farm Trace",
  "name": "Purchase Dashboard",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Farmers",
+   "number_card_name": "Farmers"
+  },
+  {
+   "label": "Farms",
+   "number_card_name": "Farms"
+  },
+  {
+   "label": "Hectares",
+   "number_card_name": "Hectares"
+  },
+  {
+   "label": "Kg bought",
+   "number_card_name": "Kg Bought"
+  },
+  {
+   "label": "Kg dispatched",
+   "number_card_name": "Kg Dispatched"
+  },
+  {
+   "label": "Open markets",
+   "number_card_name": "Open markets"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "Farm Trace",
  "public": 1,
