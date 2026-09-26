@@ -93,7 +93,9 @@ jobs:
         run: |
           # pyproject.toml pins frappe >=16.0.0,<17.0.0 under
           # [tool.bench.frappe-dependencies] and hooks.py declares no
-          # required_apps, so frappe is the only app to fetch.
+          # required_apps, so frappe is the only app to fetch. Some doctype Link
+          # fields point at erpnext / customer apps; the tests prune those instead
+          # of installing them (see the Run Tests step).
           bench get-app farmtrace $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
@@ -105,6 +107,10 @@ jobs:
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
+          # The runner preloads global test records by walking every Link field of
+          # the app's doctypes and aborts with DoesNotExistError on the first
+          # doctype this frappe-only site does not have. The doctype test modules
+          # prune those external targets with IGNORE_TEST_RECORD_DEPENDENCIES.
           bench --site test_site set-config allow_tests true
           bench --site test_site run-tests --app farmtrace
         env:
